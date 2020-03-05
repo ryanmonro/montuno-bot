@@ -1,58 +1,87 @@
 var piano = loadPiano();
 
-var major = [0, 0, 2, 4, 5, 7, 9, 11];
-var dorian = [0, 0, 2, 3, 5, 7, 9, 10];
-var aeolian = [0, 0, 2, 3, 5, 7, 8, 10];
-var harmonicminor = [0, 0, 2, 3, 5, 7, 8, 11];
+// scales in one octave, distance from tonic
+var scales = {
+  major: [0, 2, 4, 5, 7, 9, 11],
+  dorian: [0, 2, 3, 5, 7, 9, 10],
+  aeolian: [0, 2, 3, 5, 7, 8, 10],
+  harmonicminor: [0, 2, 3, 5, 7, 8, 11]
+}
 
-var pattern = [[1, 8], [3], [5], [1, 8], -1, [3, 5], -1, [1, 8], -1, [3, 5], -1, [1, 8], -1, [3, 5], -1, [1, 8]];
+// indices of the scale for a chord
+var triad = [0, 2, 4];
+
+// var pattern = [[1, 8], [3], [5], [1, 8], -1, [3, 5], -1, [1, 8], -1, [3, 5], -1, [1, 8], -1, [3, 5], -1, [1, 8]];
+
+// the index of the chord we play on each step of the bar(s)
+// add one to everything to make an inversion
+var chordPattern = [[0,3], 1, 2, [0,3], -1, [1, 2], -1, [0,3], -1, [1, 2], -1, [0,3], -1, [1, 2], -1, [0,3]];
 
 var key, progression;
-var progressions = [[[0, major], [2, major]], [[0, dorian], [-2, dorian]], [[0, dorian], [5, major]]];
+// var progressions = [[[0, major], [2, major]], [[0, dorian], [-2, dorian]], [[0, dorian], [5, major]]];
 
 function randomise(){
   key = 54 + Math.floor(Math.random() * 12);// 60 "C4"
-  progression = pickFrom(progressions);
+  // progression = pickFrom(progressions);
   Tone.Transport.bpm.value = 80 + Math.floor(Math.random() * 50);
 }
 randomise();
 
-function montunoNote(step){
-  var bar = Math.floor(step / 8);
-  if (step == 7 ) {
-    bar++;
+function buildChord(notes, key, chord, scale, inversion, targetNote){
+  var output = [];
+  // inversion: put first note up octave, do that again for second inversion
+  for(note of notes){
+    output.push(key + scaleNote(scale, chordNote(chord, note + inversion)));
   }
-  var progressionStep = progression[bar % progression.length]
-  var progress = progressionStep[0];
-  var scale = progressionStep[1];
-  var thisInversion = inversion(key + progress, scale, key);
-
-  var chord = pattern[step];
-  var newChord = [];
-  if (chord === -1) {
-    newChord = -1;
-  } else {
-    for(note of chord){
-      var newNote = Tone.Frequency(key + scale[note % scale.length] + progress, 'midi');
-      newChord.push(newNote);
-    }
-  }
-
-  console.log(inversion(key, scale, key));
-
-  return newChord;  
+  return output;
 }
 
-function inversion(tonic, scale, targetNote){
-
+function chordNote(chord, note){
+  var newNote = note % chord.length;
+  var octave = Math.floor(note / chord.length);
+  console.log(newNote, octave)
+  return chord[newNote] + octave * 7;
 }
+
+function scaleNote(scale, note){
+  var octave = Math.floor(note / 7);
+  var newNote = note % 7;
+  return scale[newNote] + octave * 12;
+}
+
+
+// function montunoNote(step){
+//   var bar = Math.floor(step / 8);
+//   if (step == 7 ) {
+//     bar++;
+//   }
+//   var progressionStep = progression[bar % progression.length]
+//   var progress = progressionStep[0];
+//   var scale = progressionStep[1];
+
+//   var notes = pattern[step];
+//   var newChord = [];
+//   if (chord === -1) {
+//     newChord = -1;
+//   } else {
+//     for(note of notes){
+//       var newNote = Tone.Frequency(key + scale[note % scale.length] + progress, 'midi');
+//       newChord.push(newNote);
+//     }
+//   }
+
+//   return newChord;  
+// }
+
 
 var loop = new Tone.Sequence(function(time, step){
-  var note = montunoNote(step);
-  console.log(note)
-  if (note !== -1) {
-      piano.triggerAttackRelease(note, "16n", time);
-  }
+  // var note = montunoNote(step);
+  // if (note !== -1) {
+    var reggie = buildChord([0,1,2,3], key, triad, scales.major, step % 4, 40);
+    reggie = mtof(reggie);
+    piano.triggerAttackRelease(reggie, "16n", time);
+  // }
+  console.log(step)
 }, range(0, 15), "16n").start(0);
 
 Tone.Transport.scheduleRepeat(function(time){
@@ -65,6 +94,8 @@ document.querySelector("#start").onclick = function(e){
   Tone.Transport.start();
 };
 
+// Utility functions
+
 function pickFrom(arr){
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -76,6 +107,17 @@ function range(from, to){
   }
   return output;
 }
+
+function mtof(arr){
+  var output = [];
+  for(note of arr){
+    var newNote = Tone.Frequency(note, 'midi');
+    output.push(newNote);
+  }
+  return output;
+}
+
+// Sample loading functions
 
 function loadPiano(){
   return new Tone.Sampler({
