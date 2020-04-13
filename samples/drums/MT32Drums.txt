@@ -1,0 +1,11 @@
+Roland MT-32 Drum Samples
+
+Format: 44.1kHz, 16bit, mono Windows PCM
+Date: 6 October 1998
+
+Notes: 
+All samples made using an Akai S3000XL sampler.
+No effects or EQ added.
+Topped and tailed in CoolEdit.
+All filenames less than or equal to 12 characters for Akai compatibility.
+No normalising performed and samples made using same velocity.
