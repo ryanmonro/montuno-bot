@@ -1,0 +1,21 @@
+body {
+  text-align: center;
+  font-family: 'Shadows Into Light', helvetica;
+  background: black;
+  color: white;
+  margin: 50px;
+}
+
+button {
+  font-size: 28px;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+.chart {
+  display: none;
+}
