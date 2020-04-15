@@ -183,8 +183,8 @@ function montunoNotes(step){
   var scaleName = progressionStep[1];
   var scale = scales[scaleName];
 
-  // if it's a V at the end of the progression resolving to a I there's a 10% chance we'll do a tritone substitution
-  var tritoneSub = Math.random() > 0.1;
+  // if it's a V at the end of the progression resolving to a I there's a 20% chance we'll do a tritone substitution
+  var tritoneSub = Math.random() < 0.2;
   if (tritoneSub && root == 7 && scaleName === "dom7" && progression[0][0] == 0 && step > 10 && bar == progression.length / 2 - 1) {
     console.log("Achievement unlocked: tritone substitution")
     root -= 6;
@@ -245,9 +245,11 @@ var loop = new Tone.Sequence(function(time, step){
   if (bar > 1) {
     var percNote = percussionPhrase[step % 8]
     if (percNote == 2) {
-      drums.triggerAttackRelease([DRUM.SNARE, PERC.HIGH], "4n", time);
+      drums.triggerAttackRelease(DRUM.SNARE, "4n", time);
+      drums.triggerAttackRelease(PERC.HIGH, "4n", time + (Math.random() * 0.02));
     } else if (percNote == 1) {
-      drums.triggerAttackRelease([DRUM.KICK, PERC.LOW], "4n", time);
+      drums.triggerAttackRelease(DRUM.KICK, "4n", time);
+      drums.triggerAttackRelease(PERC.LOW, "4n", time + (Math.random() * 0.02));
     }
     if ( percNote != 0 && bar == 3 && step > 7) {
       bass.triggerAttackRelease(bassNote(step), "4n", time);
