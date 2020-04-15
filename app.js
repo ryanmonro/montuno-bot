@@ -182,8 +182,9 @@ function montunoNotes(step){
   var root = progressionStep[0];
   var scaleName = progressionStep[1];
   var scale = scales[scaleName];
-  // if it's a V at the end of the progression resolving to a I there's a 25% chance we'll do a tritone substitution
-  var tritoneSub = Math.random() > 0.25;
+
+  // if it's a V at the end of the progression resolving to a I there's a 10% chance we'll do a tritone substitution
+  var tritoneSub = Math.random() > 0.1;
   if (tritoneSub && root == 7 && scaleName === "dom7" && progression[0][0] == 0 && step > 10 && bar == progression.length / 2 - 1) {
     console.log("Achievement unlocked: tritone substitution")
     root -= 6;
