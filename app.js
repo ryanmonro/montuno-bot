@@ -85,8 +85,8 @@ function randomise(){
   bar = 0;
   key = nextKey;
   progression = nextProgression;
-  display();
   Tone.Transport.bpm.value = 80 + Math.floor(Math.random() * 40);
+  display();
 }
 
 function randomiseNext(){
