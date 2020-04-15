@@ -10,6 +10,8 @@ button {
   font-size: 28px;
   border-radius: 5px;
   padding: 10px;
+  color: white;
+  background: black;
 }
 
 h1 {
@@ -19,3 +21,18 @@ h1 {
 .chart {
   display: none;
 }
+
+@media screen and (max-width: 800px) {
+  body {
+    margin: 10px 20px;
+  }
+
+  h1 {
+    font-size: 20px;
+  } 
+
+  button {
+    font-size: 20px;
+  }
+
+} 
